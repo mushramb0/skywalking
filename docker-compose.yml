@@ -1,6 +1,6 @@
 version: '3.3'
 services:
-  c_elasticsearch750:
+  elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
     container_name: c_elasticsearch750
     restart: always
@@ -14,31 +14,31 @@ services:
       memlock:
         soft: -1
         hard: -1
-  c_oap:
+  oap:
     image: apache/skywalking-oap-server:7.0.0-es7
     container_name: c_oap
     depends_on:
-      - c_elasticsearch750
+      - elasticsearch
     links:
-      - c_elasticsearch750
+      - elasticsearch
     restart: always
     ports:
       - 11800:11800
       - 12800:12800
     environment:
       SW_STORAGE: elasticsearch7
-      SW_STORAGE_ES_CLUSTER_NODES: c_elasticsearch750:9200
+      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
       TZ: Asia/Shanghai
   ui:
     image: apache/skywalking-ui:7.0.0
     container_name: c_oap_ui
     depends_on:
-      - c_oap
+      - oap
     links:
-      - c_oap
+      - oap
     restart: always
     ports:
       - 12801:8080
     environment:
-      SW_OAP_ADDRESS: c_oap:12800
+      SW_OAP_ADDRESS: oap:12800
       TZ: Asia/Shanghai
